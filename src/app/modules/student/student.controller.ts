@@ -12,11 +12,11 @@ const createStudent = async (req: Request, res: Response) => {
       message: 'Student is created successfully',
       data: result,
     })
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: 'Something went wrong',
-      error: error,
+      message: error.message || 'Something went wrong',
     })
   }
 }
@@ -26,15 +26,38 @@ const getStudents = async (req: Request, res: Response) => {
     const result = await StudentServices.getAllStudentsFromDB()
     res.status(200).json({
       succrss: true,
-      message: 'Students is get successfully',
+      message: 'User fetched successfully',
       data: result,
     })
-  } catch (error) {
-    console.log(error)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Something went wrong',
+    })
+  }
+}
+
+const deleteStudent = async (req: Request, res: Response) => {
+  try {
+    const { studentId } = req.params
+    const result = await StudentServices.deleteStudentsFromDB(studentId)
+    res.status(200).json({
+      succrss: true,
+      message: 'Students is deleted successfully',
+      data: result,
+    })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Something went wrong',
+    })
   }
 }
 
 export const StudentControllers = {
   createStudent,
   getStudents,
+  deleteStudent,
 }
