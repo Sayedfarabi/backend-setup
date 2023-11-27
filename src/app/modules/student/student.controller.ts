@@ -1,28 +1,24 @@
 import { NextFunction, Request, Response } from 'express'
 import { StudentServices } from './student.service'
-// import studentZodValidationSchema from './student.Zod.validation'
+import sendResponse from '../../utils/sendResponse'
+import httpStatus from 'http-status'
 
-const createStudent = async (
+const getSingleStudent = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const { student: studentData } = req.body
-    // const zodParseData = studentZodValidationSchema.parse(studentData)
-    const result = await StudentServices.createStudentIntoDB(studentData)
-    res.status(200).json({
+    const { studentId } = req.params
+    const result = await StudentServices.getSingleStudentFromDB(studentId)
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: 'Student is created successfully',
+      message: 'Student is retrieved succesfully',
       data: result,
     })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    // res.status(500).json({
-    //   success: false,
-    //   message: error.message || 'Something went wrong',
-    // })
-    next(error)
+  } catch (err) {
+    next(err)
   }
 }
 
@@ -31,15 +27,11 @@ const getStudents = async (req: Request, res: Response, next: NextFunction) => {
     const result = await StudentServices.getAllStudentsFromDB()
     res.status(200).json({
       succrss: true,
-      message: 'User fetched successfully',
+      message: 'Students fetched successfully',
       data: result,
     })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    // res.status(500).json({
-    //   success: false,
-    //   message: error.message || 'Something went wrong',
-    // })
     next(error)
   }
 }
@@ -59,16 +51,12 @@ const deleteStudent = async (
     })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    // res.status(500).json({
-    //   success: false,
-    //   message: error.message || 'Something went wrong',
-    // })
     next(error)
   }
 }
 
 export const StudentControllers = {
-  createStudent,
   getStudents,
   deleteStudent,
+  getSingleStudent,
 }
