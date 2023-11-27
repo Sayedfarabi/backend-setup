@@ -30,32 +30,35 @@ const guardianZodValidationSchema = z.object({
   motherContactNo: z.string().min(1),
 })
 
-const localguardianZodValidationSchema = z.object({
+const localGuardianZodValidationSchema = z.object({
   name: z.string().min(1),
   occupation: z.string().min(1),
   contactNo: z.string().min(1),
   address: z.string().min(1),
 })
 
-const studentZodValidationSchema = z.object({
-  id: z.string(),
-  // password: z.string().max(20),
-  // user: z.ZodType.,
-  name: userZodValidationSchema,
-  gender: z.enum(['male', 'female', 'other']),
-  dateOfBirth: z.string(),
-  email: z.string().email(),
-  contactNumber: z.string(),
-  emergencyContactNo: z.string(),
-  bloodGroup: z
-    .enum(['A+', 'B+', 'AB+', 'O+', 'O-', 'B-', 'A-', 'AB-'])
-    .optional(),
-  presentAddress: z.string(),
-  permanentAddress: z.string(),
-  guardian: guardianZodValidationSchema,
-  localGuardian: localguardianZodValidationSchema,
-  profileImg: z.string().optional(),
-  isDeleted: z.boolean(),
+const createStudentZodValidationSchema = z.object({
+  body: z.object({
+    password: z.string().max(20),
+    student: z.object({
+      name: userZodValidationSchema,
+      gender: z.enum(['male', 'female', 'other']),
+      dateOfBirth: z.string(),
+      email: z.string().email(),
+      contactNumber: z.string(),
+      emergencyContactNo: z.string(),
+      bloodGroup: z
+        .enum(['A+', 'B+', 'AB+', 'O+', 'O-', 'B-', 'A-', 'AB-'])
+        .optional(),
+      presentAddress: z.string(),
+      permanentAddress: z.string(),
+      guardian: guardianZodValidationSchema,
+      localGuardian: localGuardianZodValidationSchema,
+      profileImg: z.string().optional(),
+    }),
+  }),
 })
 
-export default studentZodValidationSchema
+export const studentZodValidations = {
+  createStudentZodValidationSchema,
+}
