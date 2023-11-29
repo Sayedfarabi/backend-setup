@@ -1,11 +1,12 @@
 import config from '../../config'
-// import { TAcademicSemester } from '../academicSemister/academicSemester.interface'
+import { AcademicSemester } from '../academicSemister/academicSemester.model'
 import { TStudent } from '../student/student.interface'
 import { Student } from '../student/student.model'
 import { TUser } from './user.interface'
 import { User } from './user.model'
+import { generateStudentId } from './user.utls'
 
-const createStudentIntoDB = async (password: string, studentData: TStudent) => {
+const createStudentIntoDB = async (password: string, payload: TStudent) => {
   // create a user object
   const userData: Partial<TUser> = {}
 
@@ -16,22 +17,27 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
   // set user role
   userData.role = 'student'
 
-  // const generateStudentId = (payload : TAcademicSemester)=>{
+  // find academic semester info
+  const getAdmissionSemester = await AcademicSemester.findById(
+    payload.admissionSemester,
+  )
+  // console.log(getAdmissionSemester)
 
-  // }
+  if (getAdmissionSemester) {
+    userData.id = await generateStudentId(getAdmissionSemester)
 
-  // set manually genetated it
-  userData.id = '2023000001'
+    // create a user
+    const newUser = await User.create(userData)
+    if (Object.keys(newUser).length) {
+      // set id, _id as user
+      payload.id = newUser.id // embaded id
+      payload.user = newUser._id // reference _id
 
-  // create a user
-  const newUser = await User.create(userData)
-  if (Object.keys(newUser).length) {
-    // set id, _id as user
-    studentData.id = newUser.id // embaded id
-    studentData.user = newUser._id // reference _id
-
-    const newStudent = await Student.create(studentData)
-    return newStudent
+      const newStudent = await Student.create(payload)
+      return newStudent
+    }
+  } else {
+    throw new Error('Your semester data can not found into DB')
   }
 }
 

@@ -20,6 +20,12 @@ router.get(
   AcademicSemesterControllers.getSingleAcademicSemester,
 )
 
-router.patch('/:semesterId', AcademicSemesterControllers.updateAcademicSemester)
+router.patch(
+  '/:semesterId',
+  validateRequest(
+    AcademicSemesterZodValidationSchema.updateAcademicSemesterZodValidationSchema,
+  ),
+  AcademicSemesterControllers.updateAcademicSemester,
+)
 
 export const AcademicSemesterRouter = router

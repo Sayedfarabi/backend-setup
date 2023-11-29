@@ -16,6 +16,17 @@ const createAcademicSemesterZodValidationSchema = z.object({
   }),
 })
 
+const updateAcademicSemesterZodValidationSchema = z.object({
+  body: z.object({
+    name: z.enum(semesterNames as [TName]).optional(),
+    code: z.enum(semesterCodes as [TCode]).optional(),
+    year: z.string().optional(),
+    startMonth: z.enum(semesterMonths as [TMonths]).optional(),
+    endMonth: z.enum(semesterMonths as [TMonths]).optional(),
+  }),
+})
+
 export const AcademicSemesterZodValidationSchema = {
   createAcademicSemesterZodValidationSchema,
+  updateAcademicSemesterZodValidationSchema,
 }
