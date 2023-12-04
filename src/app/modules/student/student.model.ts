@@ -90,97 +90,105 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 })
 
 // Main Schema
-const studentSchema = new Schema<TStudent, StudentModel>({
-  id: { type: String, required: [true, 'ID is required'], unique: true },
-  user: {
-    type: Schema.Types.ObjectId,
-    required: [true, 'User ID is required'],
-    unique: true,
-    ref: 'User',
-  },
-  // password: {
-  //   type: String,
-  //   required: [true, 'Password is required'],
-  //   maxlength: [30, 'Password can not be more than 20 characters'],
-  // },
-  name: {
-    type: userNameSchema,
-    required: [true, 'Student Name is required'],
-  },
-  gender: {
-    type: String,
-    enum: {
-      values: ['male', 'female', 'other'],
-      message: '{VALUE} is not supported',
+const studentSchema = new Schema<TStudent, StudentModel>(
+  {
+    id: { type: String, required: [true, 'ID is required'], unique: true },
+    user: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'User ID is required'],
+      unique: true,
+      ref: 'User',
     },
-    required: true,
-  },
-  dateOfBirth: {
-    type: String,
-  },
-  email: {
-    type: String,
-    required: [true, 'Email is required'],
-    unique: true,
-    validate: {
-      validator: (value: string) => validator.isEmail(value),
-      message: '{VALUE} is not a valid email',
+    // password: {
+    //   type: String,
+    //   required: [true, 'Password is required'],
+    //   maxlength: [30, 'Password can not be more than 20 characters'],
+    // },
+    name: {
+      type: userNameSchema,
+      required: [true, 'Student Name is required'],
+    },
+    gender: {
+      type: String,
+      enum: {
+        values: ['male', 'female', 'other'],
+        message: '{VALUE} is not supported',
+      },
+      required: true,
+    },
+    dateOfBirth: {
+      type: String,
+    },
+    email: {
+      type: String,
+      required: [true, 'Email is required'],
+      unique: true,
+      validate: {
+        validator: (value: string) => validator.isEmail(value),
+        message: '{VALUE} is not a valid email',
+      },
+    },
+    contactNumber: {
+      type: String,
+      required: [true, 'Contact number is required'],
+    },
+    emergencyContactNo: {
+      type: String,
+      required: [true, 'Emergency contact number is required'],
+    },
+    bloodGroup: {
+      type: String,
+      enum: {
+        values: ['A+', 'B+', 'AB+', 'O+', 'O-', 'B-', 'A-', 'AB-'],
+        message: '{VALUE} is not supported',
+      },
+      required: true,
+    },
+    presentAddress: {
+      type: String,
+      required: [true, 'Present address is required'],
+    },
+    permanentAddress: {
+      type: String,
+      required: [true, 'Permanent address is required'],
+    },
+    guardian: {
+      type: guardianSchema,
+      required: [true, 'Guardian is required'],
+    },
+    localGuardian: {
+      type: localGuardianSchema,
+      required: [true, 'Local Guardian is required'],
+    },
+    profileImg: {
+      type: String,
+    },
+    admissionSemester: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicSemester',
+    },
+    academicDepartment: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicDepartment',
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
-  contactNumber: {
-    type: String,
-    required: [true, 'Contact number is required'],
-  },
-  emergencyContactNo: {
-    type: String,
-    required: [true, 'Emergency contact number is required'],
-  },
-  bloodGroup: {
-    type: String,
-    enum: {
-      values: ['A+', 'B+', 'AB+', 'O+', 'O-', 'B-', 'A-', 'AB-'],
-      message: '{VALUE} is not supported',
-    },
-    required: true,
-  },
-  presentAddress: {
-    type: String,
-    required: [true, 'Present address is required'],
-  },
-  permanentAddress: {
-    type: String,
-    required: [true, 'Permanent address is required'],
-  },
-  guardian: {
-    type: guardianSchema,
-    required: [true, 'Guardian is required'],
-  },
-  localGuardian: {
-    type: localGuardianSchema,
-    required: [true, 'Local Guardian is required'],
-  },
-  profileImg: {
-    type: String,
-  },
-  admissionSemester: {
-    type: Schema.Types.ObjectId,
-    ref: 'AcademicSemester',
-  },
-  academicDepartment: {
-    type: Schema.Types.ObjectId,
-    ref: 'AcademicDepartment',
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-})
+  { timestamps: true },
+)
 
 studentSchema.methods.toJSON = function () {
   const studentObject = this.toObject()
   delete studentObject.password
   return studentObject
 }
+
+//virtual
+studentSchema.virtual('fullName').get(function () {
+  return this?.name?.firstName + this?.name?.middleName + this?.name?.lastName
+})
 
 // pre save middleware / hook
 // studentSchema.pre('save', async function (next) {
