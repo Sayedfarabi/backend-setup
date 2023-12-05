@@ -179,11 +179,11 @@ const studentSchema = new Schema<TStudent, StudentModel>(
   { timestamps: true },
 )
 
-studentSchema.methods.toJSON = function () {
-  const studentObject = this.toObject()
-  delete studentObject.password
-  return studentObject
-}
+// studentSchema.methods.toJSON = function () {
+//   const studentObject = this.toObject()
+//   delete studentObject.password
+//   return studentObject
+// }
 
 //virtual
 studentSchema.virtual('fullName').get(function () {

@@ -1,9 +1,9 @@
 import httpStatus from 'http-status'
-import catchAsynch from '../../utils/catchAsync'
+import catchAsync from '../../utils/catchAsync'
 import sendResponse from '../../utils/sendResponse'
 import { AcademicFacultyServices } from './academicFaculty.service'
 
-const createAcademicFaculty = catchAsynch(async (req, res) => {
+const createAcademicFaculty = catchAsync(async (req, res) => {
   const payload = req.body
   const result =
     await AcademicFacultyServices.createAcademicFacultyIntoDB(payload)
@@ -14,7 +14,7 @@ const createAcademicFaculty = catchAsynch(async (req, res) => {
     data: result,
   })
 })
-const updateAcademicFaculty = catchAsynch(async (req, res) => {
+const updateAcademicFaculty = catchAsync(async (req, res) => {
   const payload = req.body
   const facultyId = req.params.facultyId
   const result = await AcademicFacultyServices.updateAcademicFacultyFromDB(
@@ -29,7 +29,7 @@ const updateAcademicFaculty = catchAsynch(async (req, res) => {
   })
 })
 
-const deleteAcademicFaculty = catchAsynch(async (req, res) => {
+const deleteAcademicFaculty = catchAsync(async (req, res) => {
   const facultyId = req.params.facultyId
   const result =
     await AcademicFacultyServices.deleteAcademicFacultyFromDB(facultyId)
@@ -41,7 +41,7 @@ const deleteAcademicFaculty = catchAsynch(async (req, res) => {
   })
 })
 
-const getSingleAcademicFaculty = catchAsynch(async (req, res) => {
+const getSingleAcademicFaculty = catchAsync(async (req, res) => {
   const facultyId = req.params.facultyId
   const result =
     await AcademicFacultyServices.getSingleAcademicFacultyFromDB(facultyId)
@@ -53,7 +53,7 @@ const getSingleAcademicFaculty = catchAsynch(async (req, res) => {
   })
 })
 
-const getAllAcademicFaculties = catchAsynch(async (req, res) => {
+const getAllAcademicFaculties = catchAsync(async (req, res) => {
   const result = await AcademicFacultyServices.getAllAcademicFacultyFromDB()
   sendResponse(res, {
     statusCode: httpStatus.OK,
