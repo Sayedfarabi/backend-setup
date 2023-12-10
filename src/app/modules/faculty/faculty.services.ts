@@ -5,12 +5,10 @@ import { Faculty } from './faculty.model'
 import mongoose from 'mongoose'
 import QueryBuilder from '../../builder/QueryBuilder'
 import { searchableField } from './faculty.constant'
+import { User } from '../user/user.model'
 
-const updateFacultyFromDB = async (
-  facultyId: string,
-  payload: Partial<TFaculty>,
-) => {
-  if (await Faculty.isUserExists(facultyId)) {
+const updateFacultyFromDB = async (id: string, payload: Partial<TFaculty>) => {
+  if (await Faculty.isUserExists(id)) {
     const { name, ...remainingFacultyData } = payload
 
     const modifiedUpdatedData: Record<string, unknown> = {
@@ -23,36 +21,33 @@ const updateFacultyFromDB = async (
       }
     }
 
-    const result = await Faculty.findOneAndUpdate(
-      { id: facultyId },
-      modifiedUpdatedData,
-      {
-        new: true,
-        runValidators: true,
-      },
-    )
+    const result = await Faculty.findByIdAndUpdate(id, modifiedUpdatedData, {
+      new: true,
+      runValidators: true,
+    })
     return result
   } else {
     throw new AppError(httpStatus.NOT_FOUND, 'Faculty does not exists')
   }
 }
 
-const deleteFacultyFromDB = async (facultyId: string) => {
-  if (await Faculty.isUserExists(facultyId)) {
+const deleteFacultyFromDB = async (id: string) => {
+  if (await Faculty.isUserExists(id)) {
     const session = await mongoose.startSession()
     try {
       session.startTransaction()
-      const deletedAdmin = await Faculty.findOneAndUpdate(
-        { id: facultyId },
+      const deletedFaculty = await Faculty.findByIdAndUpdate(
+        id,
         { isDeleted: true },
         { new: true, session },
       )
 
-      if (!deletedAdmin) {
+      if (!deletedFaculty) {
         throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete faculty')
       }
-      const deletedUser = await Faculty.findOneAndUpdate(
-        { id: facultyId },
+      const userId = deletedFaculty?.user
+      const deletedUser = await User.findByIdAndUpdate(
+        userId,
         { isDeleted: true },
         { new: true, session },
       )
@@ -62,7 +57,7 @@ const deleteFacultyFromDB = async (facultyId: string) => {
 
       await session.commitTransaction()
       await session.endSession()
-      return deletedAdmin
+      return deletedFaculty
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       await session.abortTransaction()
@@ -74,9 +69,9 @@ const deleteFacultyFromDB = async (facultyId: string) => {
   }
 }
 
-const getSingleFacultyFromDB = async (facultyId: string) => {
-  if (await Faculty.isUserExists(facultyId)) {
-    const result = await Faculty.findOne({ id: facultyId }).populate('name')
+const getSingleFacultyFromDB = async (id: string) => {
+  if (await Faculty.isUserExists(id)) {
+    const result = await Faculty.findById(id).populate('name')
     return result
   } else {
     throw new AppError(httpStatus.NOT_FOUND, 'Faculty does not exists')

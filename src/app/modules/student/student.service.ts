@@ -9,7 +9,7 @@ import { searchableField } from './student.constant'
 
 const getSingleStudentFromDB = async (id: string) => {
   if (await Student.isUserExists(id)) {
-    const result = await Student.findOne({ id })
+    const result = await Student.findById(id)
       .populate('admissionSemester')
       .populate({
         path: 'academicDepartment',
@@ -49,7 +49,7 @@ const updateStudentFromDB = async (id: string, payload: Partial<TStudent>) => {
       }
     }
 
-    const result = await Student.findOneAndUpdate({ id }, modifiedUpdatedData, {
+    const result = await Student.findByIdAndUpdate(id, modifiedUpdatedData, {
       new: true,
       runValidators: true,
     })
@@ -64,8 +64,8 @@ const deleteStudentsFromDB = async (id: string) => {
     const session = await mongoose.startSession()
     try {
       session.startTransaction()
-      const deletedStudent = await Student.findOneAndUpdate(
-        { id },
+      const deletedStudent = await Student.findByIdAndUpdate(
+        id,
         { isDeleted: true },
         { new: true, session },
       )
@@ -73,8 +73,9 @@ const deleteStudentsFromDB = async (id: string) => {
       if (!deletedStudent) {
         throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete student')
       }
-      const deletedUser = await User.findOneAndUpdate(
-        { id },
+      const userId = deletedStudent.user
+      const deletedUser = await User.findByIdAndUpdate(
+        userId,
         { isDeleted: true },
         { new: true, session },
       )

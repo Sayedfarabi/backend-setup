@@ -5,8 +5,8 @@ import { facultyServices } from './faculty.services'
 
 const updateFaculty = catchAsync(async (req, res) => {
   const payload = req.body
-  const facultyId = req.params.facultyId
-  const result = await facultyServices.updateFacultyFromDB(facultyId, payload)
+  const id = req.params.id
+  const result = await facultyServices.updateFacultyFromDB(id, payload)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -16,8 +16,8 @@ const updateFaculty = catchAsync(async (req, res) => {
 })
 
 const deleteFaculty = catchAsync(async (req, res) => {
-  const facultyId = req.params.facultyId
-  const result = await facultyServices.deleteFacultyFromDB(facultyId)
+  const id = req.params.id
+  const result = await facultyServices.deleteFacultyFromDB(id)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -27,8 +27,8 @@ const deleteFaculty = catchAsync(async (req, res) => {
 })
 
 const getSingleFaculty = catchAsync(async (req, res) => {
-  const facultyId = req.params.facultyId
-  const result = await facultyServices.getSingleFacultyFromDB(facultyId)
+  const id = req.params.id
+  const result = await facultyServices.getSingleFacultyFromDB(id)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

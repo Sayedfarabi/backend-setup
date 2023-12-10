@@ -3,8 +3,8 @@ import { adminControllers } from './admin.controllers'
 
 const router = Router()
 router.get('/', adminControllers.getAllAdmin)
-router.get('/:adminId', adminControllers.getSingleAdmin)
-router.delete('/:adminId', adminControllers.deleteAdmin)
-router.patch('/:adminId', adminControllers.updateAdmin)
+router.get('/:id', adminControllers.getSingleAdmin)
+router.delete('/:id', adminControllers.deleteAdmin)
+router.patch('/:id', adminControllers.updateAdmin)
 
 export const AdminRouter = router

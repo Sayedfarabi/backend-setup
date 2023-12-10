@@ -5,8 +5,8 @@ import catchAsync from '../../utils/catchAsync'
 
 const updateAdmin = catchAsync(async (req, res) => {
   const payload = req.body
-  const adminId = req.params.adminId
-  const result = await adminServices.updateAdminFromDB(adminId, payload)
+  const id = req.params.id
+  const result = await adminServices.updateAdminFromDB(id, payload)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -16,8 +16,8 @@ const updateAdmin = catchAsync(async (req, res) => {
 })
 
 const deleteAdmin = catchAsync(async (req, res) => {
-  const adminId = req.params.adminId
-  const result = await adminServices.deleteAdminFromDB(adminId)
+  const id = req.params.id
+  const result = await adminServices.deleteAdminFromDB(id)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -27,8 +27,8 @@ const deleteAdmin = catchAsync(async (req, res) => {
 })
 
 const getSingleAdmin = catchAsync(async (req, res) => {
-  const adminId = req.params.adminId
-  const result = await adminServices.getSingleAdminFromDB(adminId)
+  const id = req.params.id
+  const result = await adminServices.getSingleAdminFromDB(id)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

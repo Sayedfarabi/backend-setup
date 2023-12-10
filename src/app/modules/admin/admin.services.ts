@@ -5,9 +5,10 @@ import { Admin } from './admin.model'
 import mongoose from 'mongoose'
 import QueryBuilder from '../../builder/QueryBuilder'
 import { searchableField } from './admin.constants'
+import { User } from '../user/user.model'
 
-const updateAdminFromDB = async (adminId: string, payload: Partial<TAdmin>) => {
-  if (await Admin.isUserExists(adminId)) {
+const updateAdminFromDB = async (id: string, payload: Partial<TAdmin>) => {
+  if (await Admin.isUserExists(id)) {
     const { name, ...remainingAdminData } = payload
 
     const modifiedUpdatedData: Record<string, unknown> = {
@@ -20,27 +21,23 @@ const updateAdminFromDB = async (adminId: string, payload: Partial<TAdmin>) => {
       }
     }
 
-    const result = await Admin.findOneAndUpdate(
-      { id: adminId },
-      modifiedUpdatedData,
-      {
-        new: true,
-        runValidators: true,
-      },
-    )
+    const result = await Admin.findByIdAndUpdate(id, modifiedUpdatedData, {
+      new: true,
+      runValidators: true,
+    })
     return result
   } else {
     throw new AppError(httpStatus.NOT_FOUND, 'Admin does not exists')
   }
 }
 
-const deleteAdminFromDB = async (adminId: string) => {
-  if (await Admin.isUserExists(adminId)) {
+const deleteAdminFromDB = async (id: string) => {
+  if (await Admin.isUserExists(id)) {
     const session = await mongoose.startSession()
     try {
       session.startTransaction()
-      const deletedAdmin = await Admin.findOneAndUpdate(
-        { id: adminId },
+      const deletedAdmin = await Admin.findByIdAndUpdate(
+        id,
         { isDeleted: true },
         { new: true, session },
       )
@@ -48,8 +45,9 @@ const deleteAdminFromDB = async (adminId: string) => {
       if (!deletedAdmin) {
         throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete admin')
       }
-      const deletedUser = await Admin.findOneAndUpdate(
-        { id: adminId },
+      const userId = deletedAdmin.user
+      const deletedUser = await User.findByIdAndUpdate(
+        userId,
         { isDeleted: true },
         { new: true, session },
       )
@@ -71,11 +69,9 @@ const deleteAdminFromDB = async (adminId: string) => {
   }
 }
 
-const getSingleAdminFromDB = async (adminId: string) => {
-  if (await Admin.isUserExists(adminId)) {
-    const result = await Admin.findOne({ id: adminId }).populate(
-      'managementDepartment',
-    )
+const getSingleAdminFromDB = async (id: string) => {
+  if (await Admin.isUserExists(id)) {
+    const result = await Admin.findById(id).populate('managementDepartment')
     return result
   } else {
     throw new AppError(httpStatus.NOT_FOUND, 'Admin does not exists')
