@@ -62,6 +62,7 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
             preRequisteCourses: { course: { $in: deletedPreRequisites } },
           },
         },
+        // For Transation
         { session, new: true, runValidators: true },
       )
 
