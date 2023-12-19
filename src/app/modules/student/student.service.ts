@@ -9,7 +9,8 @@ import { searchableField } from './student.constant'
 
 const getSingleStudentFromDB = async (id: string) => {
   if (await Student.isUserExists(id)) {
-    const result = await Student.findById(id)
+    const result = await Student.findOne({ id })
+      .populate('user')
       .populate('admissionSemester')
       .populate({
         path: 'academicDepartment',
@@ -101,6 +102,7 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   const studentQuery = new QueryBuilder(
     Student.find()
       .populate('admissionSemester')
+      .populate('user')
       .populate({
         path: 'academicDepartment',
         populate: {
