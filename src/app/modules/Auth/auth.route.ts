@@ -21,9 +21,23 @@ router.post(
 )
 
 router.post(
+  '/forget-password',
+  // auth(USER_ROLE.admin, USER_ROLE.faculty, USER_ROLE.student),
+  validateRequest(AuthValidations.forgetPasswordValidationSchema),
+  AuthControllers.forgetPassword,
+)
+
+router.post(
   '/refresh-token',
   validateRequest(AuthValidations.refreshTokenValidationSchema),
   AuthControllers.refreshToken,
+)
+
+router.post(
+  '/reset-password',
+  auth(USER_ROLE.admin, USER_ROLE.faculty, USER_ROLE.student),
+  validateRequest(AuthValidations.resetPasswordValidationSchema),
+  AuthControllers.resetPassword,
 )
 
 export const AuthRouter = router
