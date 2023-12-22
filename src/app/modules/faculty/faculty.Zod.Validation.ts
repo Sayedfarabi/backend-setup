@@ -70,7 +70,7 @@ const createFacultyZodValidationSchema = z.object({
       permanentAddress: z.string(),
       academicFaculty: z.string(),
       academicDepartment: z.string(),
-      profileImg: z.string().optional(),
+      // profileImg: z.string().optional(),
     }),
   }),
 })

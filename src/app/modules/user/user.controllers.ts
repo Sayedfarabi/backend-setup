@@ -1,14 +1,17 @@
 import httpStatus from 'http-status'
 import { RequestHandler } from 'express'
-// import userZodValidationSchema from './user.zod.validation'
 import { UserServices } from './user.services'
 import sendResponse from '../../utils/sendResponse'
 import catchAsync from '../../utils/catchAsync'
 
 const createStudent: RequestHandler = catchAsync(async (req, res) => {
+  // console.log(req.body)
   const { password, student: studentData } = req.body
-  // const zodParseData = userZodValidationSchema.parse(studentData)
-  const result = await UserServices.createStudentIntoDB(password, studentData)
+  const result = await UserServices.createStudentIntoDB(
+    password,
+    studentData,
+    req.file,
+  )
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -19,8 +22,11 @@ const createStudent: RequestHandler = catchAsync(async (req, res) => {
 
 const createFaculty: RequestHandler = catchAsync(async (req, res) => {
   const { password, faculty: facultyData } = req.body
-  // const zodParseData = userZodValidationSchema.parse(studentData)
-  const result = await UserServices.createFacultyIntoDB(password, facultyData)
+  const result = await UserServices.createFacultyIntoDB(
+    password,
+    facultyData,
+    req.file,
+  )
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -31,8 +37,11 @@ const createFaculty: RequestHandler = catchAsync(async (req, res) => {
 
 const createAdmin: RequestHandler = catchAsync(async (req, res) => {
   const { password, admin: adminData } = req.body
-  // const zodParseData = userZodValidationSchema.parse(studentData)
-  const result = await UserServices.createAdminIntoDB(password, adminData)
+  const result = await UserServices.createAdminIntoDB(
+    password,
+    adminData,
+    req.file,
+  )
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -41,8 +50,32 @@ const createAdmin: RequestHandler = catchAsync(async (req, res) => {
   })
 })
 
+const getMe: RequestHandler = catchAsync(async (req, res) => {
+  const { userId, role } = req.user
+  const result = await UserServices.getMeFromDB(userId, role)
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `User is retrieved successfully!`,
+    data: result,
+  })
+})
+
+const changeUserStatus: RequestHandler = catchAsync(async (req, res) => {
+  const id = req.params?.id
+  const result = await UserServices.changeuserStatusFromDB(id, req.body)
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `Status updated successfully!`,
+    data: result,
+  })
+})
+
 export const UserControllers = {
   createStudent,
   createFaculty,
   createAdmin,
+  getMe,
+  changeUserStatus,
 }

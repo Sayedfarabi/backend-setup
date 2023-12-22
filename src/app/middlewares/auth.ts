@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from 'express'
 import httpStatus from 'http-status'
-import jwt, { JwtPayload } from 'jsonwebtoken'
+import { JwtPayload } from 'jsonwebtoken'
 import config from '../config'
 import AppError from '../errors/AppError'
 import { TUserRole } from '../modules/user/user.interface'
 import { User } from '../modules/user/user.model'
 import catchAsync from '../utils/catchAsync'
+import { verifyToken } from '../modules/Auth/auth.utls'
 
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -17,11 +18,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
     }
 
     // checking if the given token is valid
-    const decoded = jwt.verify(
-      token,
-      config.jwt_access_secret as string,
-    ) as JwtPayload
-
+    const decoded = verifyToken(token, config.jwt_access_secret as string)
     const { role, userId, iat } = decoded
 
     // checking if the user is exist
